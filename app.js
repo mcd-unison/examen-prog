@@ -63,7 +63,8 @@ $("#archivo").change(function(e){
                 data.push(tempData);
             }
             $("#res").append("Archivo cargado.\n");
-            processData();
+            //processData(); //tabla 1
+            processDataHospitalizados(); //tabla 2
         };
         $("#res").append("Cargando archivo...\n");
         reader.readAsText(e.target.files.item(0));
@@ -72,10 +73,52 @@ $("#archivo").change(function(e){
 
 });
 
-function loadData(){
+
+
+//Procesar tabla 2: hospitalizados de Sonora, Chihuahua, Nuevo León y Puebla.
+function processDataHospitalizados()
+{
+    $("#res").append(`Procesando datos ${data.length} para estados hospitalizados..\n`);
+
+    var estadosData = data.filter((item) => {
+        return item.ENTIDAD_RES == "26" || //son
+        item.ENTIDAD_RES == "08" || //chi
+        item.ENTIDAD_RES == "19"|| //nuevo leon
+        item.ENTIDAD_RES == "21"; //pruebla
+    });
+
+    $("#res").append(`Datos de Sonora, Chihuahua, Nuevo León, Puebla encontrados ${estadosData.length}\n`);
+
+    debugger;
+    var hospitalizedData = estadosData.filter((item) => item.TIPO_PACIENTE == "2" );
+    $("#res").append(`Hospitalizados en Sonora, Chihuahua, Nuevo León, Puebla encontrados ${hospitalizedData.length}\n`);
+
+    var resData = [{
+        state : "Sonora", id : "26", hospitalized : 0
+    },
+    {
+        state : "Chihuahua", id : "08", hospitalized : 0
+    },
+    {
+        state : "Nuevo León", id : "19", hospitalized : 0
+    },
+    {
+        state : "Puebla", id : "21", hospitalized : 0
+    }];  
+
+        
+
+    $.each(resData, function(){
+        var state = this;
+        this.hospitalized = hospitalizedData.filter((item) => item.ENTIDAD_RES == state.id).length;
+    })
+
+    drawTable2(resData, resData.length);
 
 }
 
+
+//Procesar tabla1 : casos de Sonora -> fecha, confirmados, y decesos
 function processData(){
     
     $("#res").append(`Procesando datos ${data.length} para Sonora...\n`);
@@ -150,13 +193,27 @@ function drawTable(resData, limit = 10000){
     $("#tbSonora").html(tempHtml);
 
     genereteCSVFile(resData);
-
-    //var csvStr = ConvertToCSV(resData);
-    //window.open('data:text/csv;charset=utf-8,', escape(csvStr));
-
-
 }
 
+function drawTable2(resData, limit = 10000){
+
+    if(limit > resData.length)
+        limit = resData.length;
+
+    $("#res").append(`Generando tabla con primeros ${limit} resultados\n`);
+
+    $("#tbSonora").html("");
+    var tempHtml = "<thead><tr><th>estado</th><th>id</th><th>hospitalizados</th></tr></thead><tbody>";
+    if(resData.length > 0){
+        for(var i = 0; i < limit; i++){
+            tempHtml+= `<tr><td>${resData[i].state}</td><td>${resData[i].id}</td><td>${resData[i].hospitalized}</td></tr>`
+        }
+    }
+    tempHtml+= "</tbody>";
+    $("#tbSonora").html(tempHtml);
+
+    genereteCSVFile(resData);
+}
 
 function ConvertToCSV(objArray) {
     var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
@@ -165,7 +222,8 @@ function ConvertToCSV(objArray) {
         if(i == 0)
         {
             //headers
-            str += "fecha,confirmados,decesos" + '\r\n';
+            //str += "fecha,confirmados,decesos" + '\r\n';
+            str += "estado,id,hospitalizados" + '\r\n';
         }
         var line = '';
         for (var index in array[i]) {
