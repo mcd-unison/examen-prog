@@ -73,3 +73,25 @@ tabla_1 <- tabla_1_confirmados_sonora %>%
 #Escribimos todo a un csv en el mismo path del csv original
 write_csv(tabla_1,"./covid-data/tabla1.csv")
 
+#Generamos DataFrames para los labels de la grafica
+CLAVE <- c(26,08,19,21)
+NOMBRE <- c('SONORA', 'CHIHUAHUA', 'NUEVO LEON', 'PUEBLA')
+estados <- data.frame(CLAVE,NOMBRE)
+
+#Obtenemos los hospitalizados agrupados por fecha de ingreso y entidad, filtrando solo las entidades que queremos
+tabla_hospitalizados <- (select(datos_covid, ENTIDAD_RES, FECHA_INGRESO, RESULTADO,
+                                year_inicio_sintomas, month_inicio_sintomas, day_inicio_sintomas)
+)
+#Hacemos un join con el dataframe de estados para incluirlo 
+tabla_hospitalizados <- full_join(tabla_hospitalizados, estados, by = c("ENTIDAD_RES" = "CLAVE"))
+
+#Filtramos solo las entidades que requerimos
+tabla_hospitalizados <- tabla_hospitalizados %>%
+  group_by(FECHA_INGRESO, NOMBRE, ENTIDAD_RES) %>%
+  filter(RESULTADO == 1, ENTIDAD_RES == 26 | ENTIDAD_RES == 08 | ENTIDAD_RES == 19 | ENTIDAD_RES == 21) 
+
+#Hacemos el resumen
+tabla_hospitalizados <- summarise(tabla_hospitalizados, 
+                                  total = n())
+#Escribimos todo a un csv en el mismo path del csv original
+write_csv(tabla_hospitalizados,"./covid-data/tabla2.csv")
