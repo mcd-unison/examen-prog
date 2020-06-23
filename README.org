@@ -2,8 +2,8 @@
 #+author: Maestría en Ciencia de Datos
 #+email: mcd@unison.mx
 #+date: Admisión 2020-2
-#+html: https://github.com/mcd-unison/prog-ejemplo
-#+description: Examen ejemplo para la admisión a la /Maestria en Ciencia de Datos/ de la Universidad de Sonora
+#+html: https://github.com/mcd-unison/examen-prog
+#+description: Examen  para la admisión a la /Maestria en Ciencia de Datos/ de la Universidad de Sonora
 #+options: h:1 num:t toc:nil
 #+LATEX_CLASS_OPTIONS: [letter,11pt]
 #+LATEX_HEADER: \usepackage[spanish]{babel}
