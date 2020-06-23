@@ -19,6 +19,13 @@ ENTIDAD_KEY = 'ENTIDAD_UM'
 
 # Result accumulators
 sonoraResults = []
+aggregateStateResults = {
+    SONORA[NAME]: 0,
+    CHIHUAHUA[NAME]: 0,
+    NUEVO_LEON[NAME]: 0,
+    PUEBLA[NAME]: 0,
+}
+
 
 # Utility function for requirement for "tabla1"
 def isEntryForSonoraResults(entry):
@@ -27,10 +34,25 @@ def isEntryForSonoraResults(entry):
     return isFromSonora and isCovidPositive
 
 
+# Aggregate utility function to create "tabla2"
+def aggregateEntryIfFromFilterStates(entry):
+    if entry['INTUBADO'] == 1:  # If hospitalized
+        if entry[ENTIDAD_KEY] == SONORA[ID]:
+            aggregateStateResults[SONORA[NAME]] += 1
+        if entry[ENTIDAD_KEY] == CHIHUAHUA[ID]:
+            aggregateStateResults[CHIHUAHUA[NAME]] += 1
+        if entry[ENTIDAD_KEY] == NUEVO_LEON[ID]:
+            aggregateStateResults[NUEVO_LEON[NAME]] += 1
+        if entry[ENTIDAD_KEY] == PUEBLA[ID]:
+            aggregateStateResults[PUEBLA[NAME]] += 1
+
+
 # Process each entry. Populate all data required to go through the data just once.
 for entry in inputDict:
     if isEntryForSonoraResults(entry):
         sonoraResults.append(entry)
+
+    aggregateEntryIfFromFilterStates(entry)
 
 # Process Sonora Results
 sortedSonoraResults = sorted(sonoraResults, key=lambda r: (r['FECHA_SINTOMAS'], r['FECHA_DEF']))
@@ -47,3 +69,10 @@ with open('tabla1.csv', 'w') as csv_file:
                entry['FECHA_DEF'] if entry['FECHA_DEF'] != '9999-99-99' else '',
                ]
         writer.writerow(row)
+
+# Write "tabla2.csv"
+with open('tabla2.csv', 'w') as csv_file:
+    writer = csv.writer(csv_file)
+    writer.writerow(['State', 'Value'])
+    for key, value in aggregateStateResults.items():
+        writer.writerow([key, value])
