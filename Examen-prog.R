@@ -95,3 +95,24 @@ tabla_hospitalizados <- summarise(tabla_hospitalizados,
                                   total = n())
 #Escribimos todo a un csv en el mismo path del csv original
 write_csv(tabla_hospitalizados,"./covid-data/tabla2.csv")
+
+
+#Hacemos la grafica utilizando ggplot
+ggplot(data = tabla_hospitalizados, mapping = aes(FECHA_INGRESO, total, fill = NOMBRE))  +
+  geom_bar(stat = "identity")
+
+#Seleccionamos los confirmados a nivel nacional
+tabla_1_confirmados_nacional <- 
+  (select(datos_covid, ENTIDAD_RES, FECHA_SINTOMAS, RESULTADO, 
+  ) %>%
+    group_by(FECHA_SINTOMAS) %>%
+    filter(RESULTADO == 1)
+  )
+#Hacemos el resumen de los confirmados para la grafica
+tabla_1_confirmados_nacional <- summarise(tabla_1_confirmados_nacional, 
+                                          total = n())
+#Se hace un plot de la grafica se confirmados en el tiempo
+ggplot(data = tabla_1_confirmados_nacional, mapping = aes(x=FECHA_SINTOMAS, y = total)) +
+  geom_line() 
+
+
