@@ -1,0 +1,123 @@
+---
+title: "Examen"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Carga de paquetes
+
+You can include R code in the document as follows:
+
+```{r}
+library(tidyverse)
+```
+
+## 2 Lectura y procesamiento de datos
+## 2.1 Carga de archivo csv
+```{r}
+covid0511 <- read_csv("covid-data/200511COVID19MEXICO.csv", 
+  col_types = cols(FECHA_ACTUALIZACION = col_date(format = "%Y-%m-%d"), 
+  FECHA_DEF = col_date(format = "%Y-%m-%d"), 
+  FECHA_INGRESO = col_date(format = "%Y-%m-%d"), 
+  FECHA_SINTOMAS = col_date(format = "%Y-%m-%d")))
+```
+
+## 2.2 Generar una tabla con 5 columnas:
+
+##Fitrar Confirmados de Sonora
+```{r}
+Sonoracasos <- covid0511 %>% 
+  filter(RESULTADO=="1", ENTIDAD_RES==26) %>% 
+  select(RESULTADO,FECHA_SINTOMAS) %>%
+  group_by(FECHA_SINTOMAS) %>% summarise(sum(RESULTADO))
+Sonoracasos <- rename(Sonoracasos, 'Confirmados_fecha_sintomas'='sum(RESULTADO)')
+Sonoracasos <- rename(Sonoracasos, FECHA=FECHA_SINTOMAS)
+```
+
+##Filtrar Defunciones de Sonora
+```{r}
+Sonoradecesos <- covid0511 %>% 
+  filter(RESULTADO=="1", ENTIDAD_RES==26) %>% 
+  select(RESULTADO,FECHA_DEF) %>%
+  na.omit(FECHA_DEF) %>%
+  group_by(FECHA_DEF) %>% summarise(sum(RESULTADO))
+Sonoradecesos[is.na(Sonoradecesos)] <- 0
+Sonoradecesos <- rename(Sonoradecesos, FECHA=FECHA_DEF)
+Sonoradecesos <- rename(Sonoradecesos, 'Defunciones'='sum(RESULTADO)')
+```
+
+##Se unen las tablas de Sonoracasos y Sonoradecesos, se eliminan los valores NA y se agregan las columnas de acumulados
+```{r}
+table1<-full_join(Sonoracasos, Sonoradecesos)
+table1[is.na(table1)] <- 0
+table1 <- table1 %>% mutate(Confirmados_Acum = cumsum(Confirmados_fecha_sintomas))
+table1 <- table1 %>% mutate(Defunciones_Acum = cumsum(Defunciones))
+```
+
+## 2.3 Guardar la tabla como tabla1.csv 
+```{r}
+write.csv(table1,'table1.csv')
+```
+
+## 2.4 Generar una tabla con la cantidad de casos hospitalizados en los estados de Sonora, Chihuahua, Nuevo León y Puebla.
+## Se crea un vector con la clave de las Entidades a filtrar, se filtran los resultados confirmados, y los hospitalizados.
+## Se selecconan la Entidad de la Unidad Médica y el Resultado ya filtrado a confirmados, y se realiza la sumatoria para obtener el total de hopitalizados por Entidad
+## Se filtran las entidades objetivo
+```{r}
+Entidades_obj <- c("08","19","21","26")
+ Hospitalizados <- covid0511 %>%
+   filter(RESULTADO==1,TIPO_PACIENTE==2) %>%
+   select(ENTIDAD_UM, RESULTADO) %>%
+   group_by(ENTIDAD_UM) %>% summarize(sum(RESULTADO)) %>%
+   filter(ENTIDAD_UM %in% Entidades_obj)
+```
+## Se agregan los nombres de las Entidades Federativas, se reacomodan las columnas y se ordena por cantidad
+```{r}
+NOM_ENT<- c("Chihuahua","Nuevo León", "Puebla", "Sonora")
+Hospitalizados_NOM = data.frame(Hospitalizados,NOM_ENT)
+Hospitalizados_NOM <- rename(Hospitalizados_NOM, Hospitalizados=sum.RESULTADO.)
+Hospitalizados_NOM <- Hospitalizados_NOM %>% select(ENTIDAD_UM, NOM_ENT, Hospitalizados) %>% 
+  arrange(Hospitalizados)
+```
+
+## 2.5  Guardar la tabla como tabla2.csv
+```{r}
+write.csv(Hospitalizados_NOM,'table2.csv')
+```
+
+##2.6 Realizar dos gráficas y guardarlas en el repositorio como grafica1.png y grafica2.png
+## a) Gráfico Hospitalizados de Sonora, Chihuahua, Nuevo León y Puebla
+```{r}
+Hospitalizados_gr <- ggplot(Hospitalizados_NOM, aes(x= fct_inorder(NOM_ENT), y= Hospitalizados)) + 
+    geom_col(fill="#31869B") + theme_gray() + 
+   theme(plot.title = (element_text(size = 30, face = "bold", color="#31869B")),
+        plot.subtitle = (element_text(size = 12,color="gray80")),
+        legend.position = "none", axis.title = element_text(color="gray50"),
+        axis.text = element_text(color="black", face="bold", size=10), axis.line = element_line(color="black"),
+        plot.caption = element_text(size = 9, color = "gray80")) +
+        labs(title  = "Hospitalizados por Covid-19", x="Entidades Federativas", subtitle = "Corte al 11 de mayo de 2020",  fill = NULL, caption ="Fuente: Secretaría de Salud del Gobierno Federal")
+ggsave("grafica1.png", plot = Hospitalizados_gr)
+```
+
+## b) graficar la serie de tiempo de confirmados a nivel Nacional en el tiempo.
+```{r}
+ casosmx <- covid0511 %>% filter(RESULTADO==1) %>% 
+     select(FECHA_SINTOMAS, RESULTADO) %>% 
+     group_by (FECHA_SINTOMAS) %>% 
+     summarize(sum(RESULTADO)) %>%
+     rename(Confirmados=`sum(RESULTADO)`)
+STCasos <- ggplot(casosmx,aes(x=FECHA_SINTOMAS, y=Confirmados))+
+  geom_area(color="#31869B", fill= "#B7DEE8", size=1) + theme_gray() + 
+   theme(plot.title = (element_text(size = 30, face = "bold", color="#31869B")),
+        plot.subtitle = (element_text(size = 12,color="gray80")),
+        legend.position = "none", axis.title = element_text(color="gray50"),
+        axis.text = element_text(color="black", face="bold", size=10), axis.line = element_line(color="black"),
+        plot.caption = element_text(size = 9, color = "gray80")) +
+        labs(title  = "Casos confirmados de Covid-19", x="Fecha de inicio de Síntomas", subtitle = "Por fecha de inicio de síntomas. Corte al 11 de mayo de 2020", caption ="Fuente: Secretaría de Salud del Gobierno Federal")
+ggsave("grafica2.png", plot=STCasos)
+```
+
