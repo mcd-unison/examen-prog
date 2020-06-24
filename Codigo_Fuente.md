@@ -20,7 +20,8 @@ El lenguaje de programación utilizado es R en versión 3.6.3, haciendo
 uso del entorno de desarrollo integrado (IDE) RStudio especificamente,
 con versión 1.2.1335.
 
-### Importación y limpieza de los datos
+Importación y limpieza de los datos
+-----------------------------------
 
 Primeramente, importamos la base de datos (BD) cruda incluyendo todas
 las columnas.
@@ -31,6 +32,8 @@ BD_raw<- read.csv("/home/hugo/examen-prog/covid-data/200511COVID19MEXICO.csv", h
 # NOTA: la ruta del directorio de la BD cambiara dependiendo de donde se corra el codigo
 ```
 
+### Sonora
+
 Ahora, vamos a reducir la base de datos para quedarnos solamente con las
 columnas de Fecha de actualización (de la BD), Fecha de inicio de
 síntomas, Fecha de defunción, Estado de residencia y el Resultado a la
@@ -40,11 +43,6 @@ prueba de SARS-CoV2. Debe verse como la siguiente tabla
 # columnas a extraer
 columnas <- c("FECHA_ACTUALIZACION", "ENTIDAD_RES", "FECHA_SINTOMAS", "FECHA_DEF", "RESULTADO")
 BD_1 <- subset(BD_raw, select = columnas) # se extraen las columnas
-
-# convertimos las columnas a formato de fecha en R para no tener problemas mas adelante
-#BD_1$FECHA_ACTUALIZACION <- as.Date(BD_1$FECHA_ACTUALIZACION)
-#BD_1$FECHA_SINTOMAS <- as.Date(BD_1$FECHA_SINTOMAS)
-#BD_1$FECHA_DEF <- as.Date(BD_1$FECHA_DEF)
 
 # imprimimos las primeras columnas de la BD resultante
 head(BD_1)
@@ -102,12 +100,65 @@ head(BD_tabla1)
 write.csv(BD_tabla1, file = "tabla1.csv", row.names = FALSE)
 ```
 
-Including Plots
----------------
+### Casos hospitalizados
 
-You can also embed plots, for example:
+Veamos ahora los casos hospitalizados en los Estados de Sonora,
+Chihuahua, Nuevo León y Puebla, con claves 26, 8, 19 y 21,
+respectivamente.
 
-![](Codigo_Fuente_files/figure-markdown_github/pressure-1.png)
+De manera similar al análisis anterior, ajustamos la base de datos y nos
+quedamos con las columnas de Estado de residencia y con Tipo de paciente
+la cual indica si está hospitalizado o no.
 
-Note that the `echo = FALSE` parameter was added to the code chunk to
-prevent printing of the R code that generated the plot.
+``` r
+# se extraen las columnas
+BD_2 <- subset(BD_raw, select = c(ENTIDAD_RES, TIPO_PACIENTE)) 
+```
+
+Filtramos para obtener solamente los 4 Estados mencionados anteriormente
+con sus claves con los pacientes hospitalizados. Luego se imprime la
+tabla a archivo externo csv, llamado tabla2.
+
+``` r
+# Usamos las claves de los estados 26, 8, 19, 21 y seleccionamos el numero 2 de la columna
+# de tipo de paciente que indica que estan hospitalizados
+BD_tabla2 <- subset(BD_2, ENTIDAD_RES == c(26,8,19,21) & TIPO_PACIENTE == 2)
+# se exporta la tabla a csv
+write.csv(BD_tabla2, file = "tabla2.csv", row.names = FALSE)
+```
+
+Gráficas
+--------
+
+Realicemos una gráfica de barras de la tabla 2, para veruna comparación
+en el número de casos hospitalizados entre los 4 Estados. Esto se lleva
+a cabo con la función barplot(), nativa de R.
+
+``` r
+# La tabla ya contiene solamente pacientes hospitalizados, entonces usamos la variable 
+# de los Estados para hacer la grafica de barras verticales
+
+
+Estados_Clav <- table(BD_tabla2$ENTIDAD_RES)
+barplot(Estados_Clav, main="Pacientes hospitalizados por Estado, 5 de mayo del 2020",
+   xlab="Estado", ylab = "Pacientes hospitalizados", col = "cyan",
+   names.arg = c("Chihuahua", "Nuevo Leon", "Puebla", "Sonora")) 
+```
+
+![](Codigo_Fuente_files/figure-markdown_github/Grafica-1.png)
+
+Por último, graficaremos una serie de tiempo de los pacientes
+confirmados con SARS-CoV2 a nivel nacional, de acuerdo a la fecha de
+inicio de los síntomas. Primero creamos los vectores de R para graficar.
+
+``` r
+# se extraen las columnas de fecha de inicio de sintomas y resultado a SARS-CoV2
+BD_nacional <- subset(BD_raw, select = c(FECHA_SINTOMAS, RESULTADO))
+# nos quedamos solo con los casos confirmados positivos de SARS_CoV2
+BD_nacional <- subset(BD_nacional, RESULTADO == 1)
+# Se convierte la columna de fechas de sintomas, a fecha de formato R para poder graficar despues
+BD_nacional$FECHA_SINTOMAS <- as.Date(BD_nacional$FECHA_SINTOMAS)
+
+# Creamos un intervalo de fechas, desde la fecha más pronta de inicio de sintomas hasta el
+# ultimo dia de actualizacion de la BD que es el 11 de mayo del 2020
+```
