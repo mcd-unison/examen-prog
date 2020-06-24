@@ -1,4 +1,6 @@
 import csv
+from collections import defaultdict
+from functools import reduce
 
 import pandas as reader
 
@@ -36,7 +38,7 @@ def isEntryForSonoraResults(entry):
 
 # Aggregate utility function to create "tabla2"
 def aggregateEntryIfFromFilterStates(entry):
-    if entry['INTUBADO'] == 1:  # If hospitalized
+    if entry['TIPO_PACIENTE'] == 2:  # If hospitalized
         if entry[ENTIDAD_KEY] == SONORA[ID]:
             aggregateStateResults[SONORA[NAME]] += 1
         if entry[ENTIDAD_KEY] == CHIHUAHUA[ID]:
@@ -55,18 +57,25 @@ for entry in inputDict:
     aggregateEntryIfFromFilterStates(entry)
 
 # Process Sonora Results
+curatedSonoraResults = []
 sortedSonoraResults = sorted(sonoraResults, key=lambda r: (r['FECHA_SINTOMAS'], r['FECHA_DEF']))
+for entry in sortedSonoraResults:
+    curatedSonoraResults.append(
+        {'Fecha': entry["FECHA_SINTOMAS"], 'Confirmado': 1 if entry['RESULTADO'] == 1 else 0,
+         'Deceso': 1 if entry['FECHA_DEF'] != '9999-99-99' else 0, })
+
+df = reader.DataFrame(curatedSonoraResults)
+
+groupedResults = df.groupby(['Fecha']).agg(sum)
 
 # Write "tabla1.csv"
 with open('tabla1.csv', 'w') as csv_file:
     writer = csv.writer(csv_file)
-    writer.writerow(['Fecha', 'Confirmado', 'Inicio sintomas', 'Deceso', 'Fecha deceso'])
-    for entry in sortedSonoraResults:
-        row = [entry['FECHA_ACTUALIZACION'],
-               'Si' if entry['RESULTADO'] == 1 else 'No',
-               entry['FECHA_SINTOMAS'],
-               'Si' if entry['FECHA_DEF'] != '9999-99-99' else 'No',
-               entry['FECHA_DEF'] if entry['FECHA_DEF'] != '9999-99-99' else '',
+    writer.writerow(['Fecha', 'Confirmados', 'Decesos'])
+    for entry in groupedResults.reset_index().to_dict('records'):
+        row = [entry['Fecha'],
+               entry['Confirmado'],
+               entry['Deceso']
                ]
         writer.writerow(row)
 
