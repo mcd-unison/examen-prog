@@ -10,6 +10,9 @@ Universidad de Sonora
 23 de junio del 2020
 --------------------
 
+Código fuente: Codigo\_Fuente.Rmd
+---------------------------------
+
 Este documento y código es para el examen de conocimientos de
 programación de la Maestría en Ciencia de Datos. Convocatoria 2020. Se
 trabajará en analisis sobre COVID-19, la enfermedad causada por el nuevo
@@ -130,7 +133,7 @@ write.csv(BD_tabla2, file = "tabla2.csv", row.names = FALSE)
 Gráficas
 --------
 
-Realicemos una gráfica de barras de la tabla 2, para veruna comparación
+Realicemos una gráfica de barras de la tabla 2, para ver una comparación
 en el número de casos hospitalizados entre los 4 Estados. Esto se lleva
 a cabo con la función barplot(), nativa de R.
 
@@ -145,7 +148,7 @@ barplot(Estados_Clav, main="Pacientes hospitalizados por Estado, 5 de mayo del 2
    names.arg = c("Chihuahua", "Nuevo Leon", "Puebla", "Sonora")) 
 ```
 
-![](Codigo_Fuente_files/figure-markdown_github/Grafica-1.png)
+![](Grafica-1.png)
 
 Por último, graficaremos una serie de tiempo de los pacientes
 confirmados con SARS-CoV2 a nivel nacional, de acuerdo a la fecha de

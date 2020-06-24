@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Hugo de Jesús Valenzuela Chaparro
 ## Universidad de Sonora
 ## 23 de junio del 2020
+## Código fuente: Codigo_Fuente.Rmd
 
 Este documento y código es para el examen de conocimientos de programación de la Maestría en Ciencia de Datos. Convocatoria 2020. Se trabajará en analisis sobre COVID-19, la enfermedad causada por el nuevo coronavirus SARS-CoV2, haciendo uso de los datos abiertos de la Secretaria de Salud Federal con fecha de corte al 11 de mayo del 2020.
 
@@ -84,7 +85,7 @@ write.csv(BD_tabla2, file = "tabla2.csv", row.names = FALSE)
 ```
 
 ## Gráficas
-Realicemos una gráfica de barras de la tabla 2, para veruna comparación en el número de casos hospitalizados entre los 4 Estados. Esto se lleva a cabo con la función barplot(), nativa de R.
+Realicemos una gráfica de barras de la tabla 2, para ver una comparación en el número de casos hospitalizados entre los 4 Estados. Esto se lleva a cabo con la función barplot(), nativa de R.
 
 ```{r Grafica}
 # La tabla ya contiene solamente pacientes hospitalizados, entonces usamos la variable 
