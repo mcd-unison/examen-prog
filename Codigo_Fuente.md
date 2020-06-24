@@ -1,8 +1,11 @@
 Examen de conocimientos de programación para la Maestría en Ciencia de Datos
 ============================================================================
 
-Autor: Hugo de Jesús Valenzuela Chaparro
-----------------------------------------
+Hugo de Jesús Valenzuela Chaparro
+---------------------------------
+
+Universidad de Sonora
+---------------------
 
 23 de junio del 2020
 --------------------
@@ -16,10 +19,6 @@ Secretaria de Salud Federal con fecha de corte al 11 de mayo del 2020.
 El lenguaje de programación utilizado es R en versión 3.6.3, haciendo
 uso del entorno de desarrollo integrado (IDE) RStudio especificamente,
 con versión 1.2.1335.
-
-When you click the **Knit** button a document will be generated that
-includes both content as well as the output of any embedded R code
-chunks within the document. You can embed an R code chunk like this:
 
 ### Importación y limpieza de los datos
 
@@ -41,6 +40,13 @@ prueba de SARS-CoV2. Debe verse como la siguiente tabla
 # columnas a extraer
 columnas <- c("FECHA_ACTUALIZACION", "ENTIDAD_RES", "FECHA_SINTOMAS", "FECHA_DEF", "RESULTADO")
 BD_1 <- subset(BD_raw, select = columnas) # se extraen las columnas
+
+# convertimos las columnas a formato de fecha en R para no tener problemas mas adelante
+#BD_1$FECHA_ACTUALIZACION <- as.Date(BD_1$FECHA_ACTUALIZACION)
+#BD_1$FECHA_SINTOMAS <- as.Date(BD_1$FECHA_SINTOMAS)
+#BD_1$FECHA_DEF <- as.Date(BD_1$FECHA_DEF)
+
+# imprimimos las primeras columnas de la BD resultante
 head(BD_1)
 ```
 
@@ -52,11 +58,49 @@ head(BD_1)
     ## 5          2020-05-11          25     2020-04-02 2020-04-23         1
     ## 6          2020-05-11          25     2020-03-31 9999-99-99         1
 
-Se nos pide una tabla de tres columnas: fecha (de actualización),
+Se nos pide una tabla de tres columnas: En específico para el Estado de
+Sonora (clave 26).
+
+Procedemos a hacer una filtración de la BD para tener las personas de
+Sonora confirmadas con SARS-CoV2 por fecha de síntomas y que
+lamentablemente fallecieron.
+
+``` r
+# usamos funcion subset para quedarnos con los fallecimientos de Sonora, con resultado de SARS-CoV2 positivo
+BD_1 <- subset(BD_1, ENTIDAD_RES == 26 & RESULTADO == 1 & FECHA_DEF != "9999-99-99")
+head(BD_1)
+```
+
+    ##      FECHA_ACTUALIZACION ENTIDAD_RES FECHA_SINTOMAS  FECHA_DEF RESULTADO
+    ## 1138          2020-05-11          26     2020-04-09 2020-04-22         1
+    ## 1643          2020-05-11          26     2020-04-08 2020-04-15         1
+    ## 1752          2020-05-11          26     2020-03-30 2020-04-08         1
+    ## 1814          2020-05-11          26     2020-03-20 2020-04-05         1
+    ## 2186          2020-05-11          26     2020-04-13 2020-04-21         1
+    ## 2819          2020-05-11          26     2020-04-14 2020-04-29         1
+
+Nos quedamos ahora con las columnas fecha (de actualización),
 confirmados de SARS-CoV2 por fecha de síntomas, decesos entre los
-confirmados. En específico para el Estado de Sonora. Procedemos a hacer
-una filtración de la BD para tener las personas de Sonora confirmadas
-con SARS-CoV2 por fecha de síntomas y que lamentablemente fallecieron.
+confirmados. Luego se exportan a una tabla en formato csv, llamada
+Tabla1.
+
+``` r
+BD_tabla1 <- subset(BD_1, select = -c(ENTIDAD_RES, RESULTADO))
+head(BD_tabla1)
+```
+
+    ##      FECHA_ACTUALIZACION FECHA_SINTOMAS  FECHA_DEF
+    ## 1138          2020-05-11     2020-04-09 2020-04-22
+    ## 1643          2020-05-11     2020-04-08 2020-04-15
+    ## 1752          2020-05-11     2020-03-30 2020-04-08
+    ## 1814          2020-05-11     2020-03-20 2020-04-05
+    ## 2186          2020-05-11     2020-04-13 2020-04-21
+    ## 2819          2020-05-11     2020-04-14 2020-04-29
+
+``` r
+# se exporta la tabla a archivo tabla1.csv
+write.csv(BD_tabla1, file = "tabla1.csv", row.names = FALSE)
+```
 
 Including Plots
 ---------------

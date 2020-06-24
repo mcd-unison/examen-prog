@@ -21,7 +21,7 @@ Este documento y código es para el examen de conocimientos de programación de 
 
 El lenguaje de programación utilizado es R en versión 3.6.3, haciendo uso del entorno de desarrollo integrado (IDE) RStudio especificamente, con versión 1.2.1335. 
 
-### Importación y limpieza de los datos
+## Importación y limpieza de los datos
 
 Primeramente, importamos la base de datos (BD) cruda incluyendo todas las columnas.
 ```{r}
@@ -29,6 +29,8 @@ Primeramente, importamos la base de datos (BD) cruda incluyendo todas las column
 BD_raw<- read.csv("/home/hugo/examen-prog/covid-data/200511COVID19MEXICO.csv", header = TRUE, sep = ",")
 # NOTA: la ruta del directorio de la BD cambiara dependiendo de donde se corra el codigo
 ```
+
+### Sonora
 
 Ahora, vamos a reducir la base de datos para quedarnos solamente con las columnas de Fecha de actualización (de la BD), Fecha de inicio de síntomas, Fecha de defunción, Estado de residencia y el Resultado a la prueba de SARS-CoV2. Debe verse como la siguiente tabla
 
@@ -65,6 +67,28 @@ head(BD_tabla1)
 # se exporta la tabla a archivo tabla1.csv
 write.csv(BD_tabla1, file = "tabla1.csv", row.names = FALSE)
 ```
+
+### Casos hospitalizados
+Veamos ahora los casos hospitalizados en los Estados de Sonora, Chihuahua, Nuevo León y Puebla, con claves 26, 8, 19 y 21, respectivamente.
+
+De manera similar al análisis anterior, ajustamos la base de datos y nos quedamos con las columnas de Estado de residencia y con Tipo de paciente la cual indica si está hospitalizado o no.
+
+```{r}
+# se extraen las columnas
+BD_2 <- subset(BD_raw, select = c(ENTIDAD_RES, TIPO_PACIENTE)) 
+```
+
+Filtramos para obtener solamente los 4 Estados mencionados anteriormente con sus claves con los pacientes hospitalizados. Luego se imprime la tabla a archivo externo csv, llamado tabla2.
+
+```{r}
+# Usamos las claves de los estados 26, 8, 19, 21 y seleccionamos el numero 2 de la columna
+# de tipo de paciente que indica que estan hospitalizados
+BD_tabla2 <- subset(BD_2, ENTIDAD_RES == c(26,8,19,21) & TIPO_PACIENTE == 2)
+# se exporta la tabla a csv
+write.csv(BD_tabla2, file = "tabla2.csv", row.names = FALSE)
+```
+
+
 
 
 
