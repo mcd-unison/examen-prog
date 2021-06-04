@@ -42,19 +42,19 @@ function generate_json_in_state(data){
 
     // Aqui le doy formato al arreglo para que genere el CSV correctamente y lo mando a la funcion
     // para que se descargue automaticamente
-    example = [
+    headers = [
         ['id','date','demise','demise_date','gender']
     ];
     pac_son_covid.forEach((pac)=>{
-        example2 =[];
-        example2.push(pac.register_id);
-        example2.push(pac.date);
-        example2.push(pac.demise);
-        example2.push(pac.demise_date);
-        example2.push(pac.gender);
-        example.push(example2)
+        to_push =[];
+        to_push.push(pac.register_id);
+        to_push.push(pac.date);
+        to_push.push(pac.demise);
+        to_push.push(pac.demise_date);
+        to_push.push(pac.gender);
+        headers.push(to_push)
     });
-    exportToCsv("tabla1.csv",example);
+    //exportToCsv("tabla1.csv",headers);
 
     loadTableData(pac_son_covid)
 }
