@@ -1,0 +1,48 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GitHub Documents
+
+This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
+
+## Contexto
+
+## Librerias necesarias
+```{r}
+library(dplyr)
+```
+
+## Importamos el conjunto de datos
+```{r}
+data_raw <- read.csv("/Users/hugo/examen_mcd_2021/examen-prog/covid-data/200511COVID19MEXICO.csv",
+                     header = T, sep = ",")
+```
+
+## Generación de la tabla 1
+Se utilizan funciones de la librería dplyer para hacer las respectivas filtraciones
+en el conjunto de datos. En este caso se nos está requiriendo obtener de los datos aquellos casos positivos a SARS-CoV2 en Sonora que lamentablemente fallecieron (fecha de defunción distinta a "9999-99-99"). Corroboramos también que tengan registrada una fecha de inicio de síntomas, es decir, distinta a "9999-99-99".
+
+Después de filtrar, las tres columnas que se extraen son fecha de actualización, fecha de inicio de sintomas y fecha de defunción.
+
+```{r}
+#filtramos usando pipelines, con filter() condicionamos y con select() extraemos columnas
+# Sonora tiene clave de Estado 26, resultado positivo SARS-CoV2 indicado con 1
+data_son <- data_raw %>% filter(ENTIDAD_RES == 26 & RESULTADO == 1
+                                & FECHA_SINTOMAS != "9999-99-99"
+                                & FECHA_DEF != "9999-99-99") %>%
+                         select(FECHA_ACTUALIZACION, FECHA_SINTOMAS, FECHA_DEF)
+
+```
+
+Se exportan los datos obtenidos a una tabla llamada tabla1:
+
+```{r}
+write.csv(data_son , file = "tabla1.csv", row.names = F)
+```
+
