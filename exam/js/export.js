@@ -1,3 +1,5 @@
+// Funcion que se utiliza para crear los CSV
+// No es de mi autoria pero es utilizada en el mundo del JAVASCRIPT
 function exportToCsv(filename, rows) {
     var processRow = function (row) {
         var finalVal = '';

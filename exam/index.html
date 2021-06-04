@@ -8,8 +8,8 @@
       <script src="https://code.highcharts.com/modules/exporting.js"></script>
       <script src="https://code.highcharts.com/modules/export-data.js"></script>
       <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
       <link rel="stylesheet" href="./css/styles.css">
       <script src="./js/sonora_pac.js"></script> 
       <script src="./js/general.js"></script> 
@@ -30,6 +30,8 @@
     <div class="tab">
         <button class="tablinks" onclick="openCity(event, 'first')" id="defaultOpen">Confirmados en Sonora</button>
         <button class="tablinks" onclick="openCity(event, 'second')">Cantidad por estado</button>
+        <button class="tablinks" onclick="openCity(event, 'third')">Grafica de cantidad por estado</button>
+        <button class="tablinks" onclick="openCity(event, 'forth')">Otra grafica</button>
       </div>
 
       <div id="first" class="tabcontent">
@@ -58,6 +60,21 @@
             </thead>
             <tbody id="testBody"></tbody>
           </table>
+      </div>
+
+      <div id="third" class="tabcontent">
+          <!-- Seccion en donde se genera la grafica -->
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+        <!-- Boton para descargar la grafica -->
+        <button><a id="download" download="grafica1.png" href="" class="btn btn-primary float-right bg-flat-color-1" title="Descargar Gráfico">Descargar Grafica</a></button>
+      </div>
+
+      <div id="forth" class="tabcontent">
+        <div>
+            <canvas id="myChart2"></canvas>
+        </div>
       </div>
 
   </body>
@@ -92,14 +109,23 @@ function handleFileSelect(evt) {
     //  Mando llamar la funcion que procesa la informacion en tipo JSON para que pueda agregarlo a la tabla de personas en SONORA
     generate_json_in_state(data.data);
 
-    // Se manda llamar la funcion que agregar a la tabla el total de 
+    // Se manda llamar la funcion que agregar a la tabla el total de pacientes pro covid de cada estado solicitado
     cant_pac_per_state(data.data);
     }
   });
 }
 
 
+document.getElementById("defaultOpen").click();
 
-  document.getElementById("defaultOpen").click();
+// Esto hace que la grafica se convierta en base64 y se pueda descargar
+document.getElementById("download").addEventListener('click', function(){
+  /*Get image of canvas element*/
+  var url_base64jp = document.getElementById("myChart").toDataURL("image/jpg");
+  /*get download button (tag: <a></a>) */
+  var a =  document.getElementById("download");
+  /*insert chart image url to download button (tag: <a></a>) */
+  a.href = url_base64jp;
+});
 
 </script>

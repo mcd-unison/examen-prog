@@ -39,8 +39,6 @@ function cant_pac_per_state(data){
                     }
                 ]
 
-
-    
     // Manda llamar la funcion que genera el csv, ya formateado para que se imprima correctamente
     headers = [
         ['state','qty']
@@ -51,11 +49,15 @@ function cant_pac_per_state(data){
         to_push.push(st.total);
         headers.push(to_push)
     });
+    //exportToCsv("tabla2.csv",headers);
 
-    exportToCsv("tabla2.csv",headers);
-
-    // Se manda llamar la funcion para pintal la segunda tabla en la tab 2
+    // Se manda llamar la funcion para pintar la segunda tabla en la tab 2
     load_table_per_state(count_state);
+
+    // Llama la funcion que grafica la informacion en la otra tab
+    states=['Sonora','Chihuahua','Nuevo Leon','Puebla']
+    data_cont=[sr,ch,nl,pl];
+    graph(states,data_cont);
 }
 
 
@@ -73,3 +75,25 @@ function load_table_per_state(items) {
 
     });
   }
+
+function graph(labels,info){
+    var densityData = {
+        label: 'Total',
+        data: info,
+        backgroundColor: [
+            'rgba(0, 99, 132, 0.6)',
+            'rgba(30, 99, 132, 0.6)',
+            'rgba(60, 99, 132, 0.6)',
+            'rgba(90, 99, 132, 0.6)'
+        ]
+      };
+
+    var atx = document.getElementById("myChart").getContext("2d");
+    const barChart = new Chart(atx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [densityData]
+        }
+    });
+}

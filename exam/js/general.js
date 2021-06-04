@@ -1,3 +1,4 @@
+// Es la funcion que se usa para utiliar las tabs
 function openCity(evt, cityName) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
