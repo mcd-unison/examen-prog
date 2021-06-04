@@ -46,3 +46,46 @@ Se exportan los datos obtenidos a una tabla llamada tabla1:
 write.csv(data_son , file = "tabla1.csv", row.names = F)
 ```
 
+## Generación de la tabla 2
+
+En esta tabla se nos pide contabilizar los casos hospitalizados en los Estados de Sonora, Chihuahua, Nuevo León y Puebla, con claves 26, 8, 19 y 21, respectivamente. Procedemos primero creando el tibble o tabla que alojara dicha información.
+
+```{r}
+# inicializando tibble para los Estados y la cantidad de personas hospitalizadas
+Estados <- c("Sonora", "Chihuahua", "Nuevo_Leon", "Puebla")
+cantidad_hosp <- tibble(Estado = Estados,
+                        Total_hospitalizados = c(0, 0, 0, 0))
+```
+
+Hacemos un loop sobre las claves de Estados para contabilizar los casos hospitalizados en los Estados mencionados anteriormente, y se irá añadiendo el resultado en el tibble ````cantidad_hosp```` que se inicializó
+
+```{r}
+# la variable contador ira determinando en cual renglon del tibble se ira guardando el numero de 
+# pacientes hospitalizados obtenidos con filter(), el orden del loop va de Sonora, Chihuahua,
+# Nuevo Leon y Puebla
+
+contador <- 1
+for (i in c(26, 8, 19, 21)){
+  n <- data_raw %>% filter(ENTIDAD_RES == i & TIPO_PACIENTE == 2) %>%
+                  summarise(count = n()) # num. hospitalizados
+  cantidad_hosp[contador, 2] <- n # guardar en tibble
+  contador <- contador + 1
+}
+```
+
+Ahora, exportamos los resultados guardados en el tibble a una tabla csv llamada tabla 2
+
+```{r}
+write.csv(cantidad_hosp , file = "tabla2.csv", row.names = F)
+```
+
+
+
+
+
+
+
+
+
+
+
