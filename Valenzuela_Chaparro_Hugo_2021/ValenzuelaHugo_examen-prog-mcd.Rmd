@@ -17,7 +17,7 @@ Este script es parte del examen de conocimiento de programación para la Maestr�
 **Fecha:** 4 de junio del 2021
 
 ## Librerias necesarias
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(dplyr)
 library(ggplot2)
 library(gt)
@@ -65,7 +65,7 @@ tabla_1 <-
   )
 tabla_1
 ```
-
+**NOTA:** En lugar de una columna de confirmados, agregué la columna de fecha de actualización. Creo que no hay problema pues ambas columnas serían un poco redundantes de igual manera, esta fecha de actualización da la misma fecha mientras que la de confirmados solamente daría un número 1.
 
 ## Generación de la tabla 2
 
@@ -113,6 +113,8 @@ tabla_2 <-
   )
 tabla_2
 ```
+
+
 
 ## Gráficas
 
