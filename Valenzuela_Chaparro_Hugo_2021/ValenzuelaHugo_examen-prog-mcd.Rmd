@@ -53,7 +53,7 @@ write.csv(data_son , file = "tabla1.csv", row.names = F)
 
 Imprimimos un preview de la tabla para este documento:
 
-```{r}
+```{r, results='asis'}
 # se hace uso de la libreria gt para imprimir la tabla en el documento
 #tabla_1 <- gt(data = data_son)
 tabla_1 <- gt_preview(data = data_son, top_n = 5, bottom_n = 5, incl_rownums = TRUE)
@@ -102,7 +102,7 @@ write.csv(cantidad_hosp , file = "tabla2.csv", row.names = F)
 
 Imprimimos la tabla para este documento:
 
-```{r}
+```{r, results='asis'}
 # se hace uso de la libreria gt para imprimir la tabla en el documento
 tabla_2 <- gt(data = cantidad_hosp)
 tabla_2 <- 
