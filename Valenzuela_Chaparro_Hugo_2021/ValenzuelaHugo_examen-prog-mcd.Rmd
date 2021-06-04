@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Examen de conocimiento de programación MCD-UNISON"
 output: github_document
 ---
 
@@ -7,15 +7,20 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## GitHub Documents
+## Información
+Este script es parte del examen de conocimiento de programación para la Maestría en Ciencia de Datos de la Universidad de Sonora. Se hace uso de Rmarkdown para hacer las manipulaciones necesarias con el conjunto de datos.
 
-This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
+**Autor:** Hugo de Jesús Valenzuela Chaparro
 
-## Contexto
+**Código fuente en:** ValenzuelaHugo_examen-prog-mcd.Rmd
+
+**Fecha:** 4 de junio del 2021
 
 ## Librerias necesarias
 ```{r}
 library(dplyr)
+library(ggplot2)
+library(gt)
 ```
 
 ## Importamos el conjunto de datos
@@ -46,6 +51,22 @@ Se exportan los datos obtenidos a una tabla llamada tabla1:
 write.csv(data_son , file = "tabla1.csv", row.names = F)
 ```
 
+Imprimimos un preview de la tabla para este documento:
+
+```{r}
+# se hace uso de la libreria gt para imprimir la tabla en el documento
+#tabla_1 <- gt(data = data_son)
+tabla_1 <- gt_preview(data = data_son, top_n = 5, bottom_n = 5, incl_rownums = TRUE)
+tabla_1 <- 
+  tabla_1 %>%
+  tab_header(
+    title = "Casos positivos SARS-CoV2 en Sonora",
+    subtitle = "pacientes que lamentablemente fallecieron"
+  )
+tabla_1
+```
+
+
 ## Generación de la tabla 2
 
 En esta tabla se nos pide contabilizar los casos hospitalizados en los Estados de Sonora, Chihuahua, Nuevo León y Puebla, con claves 26, 8, 19 y 21, respectivamente. Procedemos primero creando el tibble o tabla que alojara dicha información.
@@ -54,7 +75,7 @@ En esta tabla se nos pide contabilizar los casos hospitalizados en los Estados d
 # inicializando tibble para los Estados y la cantidad de personas hospitalizadas
 Estados <- c("Sonora", "Chihuahua", "Nuevo_Leon", "Puebla")
 cantidad_hosp <- tibble(Estado = Estados,
-                        Total_hospitalizados = c(0, 0, 0, 0))
+                        Casos_hospitalizados = c(0, 0, 0, 0))
 ```
 
 Hacemos un loop sobre las claves de Estados para contabilizar los casos hospitalizados en los Estados mencionados anteriormente, y se irá añadiendo el resultado en el tibble ````cantidad_hosp```` que se inicializó
@@ -79,10 +100,55 @@ Ahora, exportamos los resultados guardados en el tibble a una tabla csv llamada 
 write.csv(cantidad_hosp , file = "tabla2.csv", row.names = F)
 ```
 
+Imprimimos la tabla para este documento:
 
+```{r}
+# se hace uso de la libreria gt para imprimir la tabla en el documento
+tabla_2 <- gt(data = cantidad_hosp)
+tabla_2 <- 
+  tabla_2 %>%
+  tab_header(
+    title = "Casos de pacientes hospitalizados",
+    subtitle = "En Sonora, Chihuahua, Nuevo León y Puebla"
+  )
+tabla_2
+```
 
+## Gráficas
 
+### Gráfica 1: Casos hospitalizados en Sonora, Chihuahua, Nuevo León y Puebla
 
+```{r}
+# Graficamos usando ggplot2 de tidyverse
+ggplot(data = cantidad_hosp, aes(x = Estado, y = Casos_hospitalizados)) + 
+  geom_bar(stat = "identity", fill = "red4") + labs(y = "Casos hospitalizados") + 
+  scale_y_continuous(breaks = seq(0,1400,100)) + 
+  ggtitle("Casos de pacientes hospitalizados")
+# exportar grafica
+ggsave("grafica1.png", dpi = 200)
+```
+
+### Gráfica 2: Confirmados a nivel nacional en el tiempo
+En la última gráfica, se nos pide una serie de tiempo de los pacientes confirmados de SARS-CoV2 a nivel nacional, para la referencia temporal utilizaré la fecha de inicio de síntomas.
+
+```{r}
+# filtramos para obtener casos positivos y que tengan confirmada una fecha de inicio de
+# sintomas
+serie_tiempo <-  data_raw %>% filter(RESULTADO == 1 
+                                     & FECHA_SINTOMAS != "9999-99-99")
+  
+```
+
+Realizamos la gráfica de la serie de tiempo con ayuda de ggplot2
+
+```{r}
+ggplot(data = serie_tiempo) + geom_bar(aes(x = FECHA_SINTOMAS), fill = "blue4") +
+  labs(x = "Fecha inicio de sintomas", y = "Numero de casos") + 
+  ggtitle("Serie de tiempo casos confirmados a nivel nacional") +
+  theme(axis.text.x=element_text(angle=90, hjust=1, size = 6))
+# exportar grafica
+ggsave("grafica2.png", dpi = 200)
+```
 
 
 
