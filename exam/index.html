@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+      <script src="https://code.highcharts.com/modules/exporting.js"></script>
+      <script src="https://code.highcharts.com/modules/export-data.js"></script>
+      <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+      <link rel="stylesheet" href="./css/styles.css">
+      <script src="./js/sonora_pac.js"></script> 
+      <script src="./js/general.js"></script> 
+      <script src="./js/export.js"></script> 
+    </head>
+
+  <body>
+    <div class="container">
+      <div class=col-lg-12>
+      <div id="drop_zone" onclick="dropzoneClick()" accept=".csv" class="well"><center><h1><i class="fa-cloud-upload"></i> Agrega tu archivo aqui</h1></center></div>
+      <input type="file" name="file" id="file" class="hide"/>
+      </div>
+    </div>
+    </br>
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'first')" id="defaultOpen">Confirmados en Sonora</button>
+        <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
+        <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+      </div>
+
+      <div id="first" class="tabcontent">
+        <table id="myTable" class="table table-borderless table-striped table-earning">
+          <thead>
+            <tr>
+              <th>Id_registro</th>
+              <th>Fecha de inicio de sintomas</th>
+              <th>Deceso</th>
+              <th>Fecha de deceso</th>
+              <th>Sexo</th>
+            </tr>
+          </thead>
+          <tbody id="testBody"></tbody>
+        </table>
+      </div>
+      
+      <div id="Paris" class="tabcontent">
+        <h3>Paris</h3>
+        <p>Paris is the capital of France.</p> 
+      </div>
+      
+      <div id="Tokyo" class="tabcontent">
+        <h3>Tokyo</h3>
+        <p>Tokyo is the capital of Japan.</p>
+      </div>
+
+    <!-- En esta tabla se presentan los datos de confirmados por  SARS-CoV2 en Sonora al igual si falleció -->
+
+
+    </br>
+    <!-- <button onclick="convert_to_json()">Convertir a JSON</button> -->
+  </body>
+</html>
+
+
+<script>
+$.PAYLOAD = new Object();
+
+$(document).ready(function(){
+    $("#file").change(handleFileSelect);
+ });
+
+// Esta es la funcion que te abre el modal para agregar el archivo
+function dropzoneClick(evt){
+  $('#file').click();
+}
+
+let info;
+let stations_names = [];
+
+// Aqui parsea el archivo que se carga para convertirlo en tipo JSON y poder manipularlo
+function handleFileSelect(evt) {
+  var file = evt.target.files[0];
+  Papa.parse(file, {
+    header: true,
+    dynamicTyping: true,
+    complete: function(data) {
+      console.log("Sin alterar");
+      console.log(data);
+
+    //  Mando llamar la funcion que procesa la informacion en tipo JSON para que pueda agregarlo a la tabla
+    generate_json_in_state(data.data);
+    }
+  });
+}
+
+
+
+  document.getElementById("defaultOpen").click();
+
+</script>
