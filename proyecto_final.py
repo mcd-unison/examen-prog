@@ -1,5 +1,5 @@
 #Importando librerias
-import matplotlib as mplt
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 #Cargando datos en frame
@@ -25,7 +25,7 @@ sonoraAgrupados = sonoraConfirmados.groupby('FECHA_SINTOMAS').sum('DEFUNCION','R
 #Ordenar por fecha de sintomas
 ordenCasosMexico = sonoraAgrupados.sort_values('FECHA_SINTOMAS')
 #Cambio de nombre columnas
-hospSonChNLPuAgrupados.columns = ['Fecha Sintomas','Casos','Defunciones']
+ordenCasosMexico.columns = ['Fecha Sintomas','Casos','Defunciones']
 #Grabar tabla.csv
 ordenCasosMexico.to_csv(nameFileSonoraConf,index=False)
 
@@ -51,4 +51,38 @@ hospSonChNLPuAgrupados["ENTIDAD_RES"].replace({26: "Sonora", 21: "Puebla",19:"Nu
 hospSonChNLPuAgrupados.columns = ['Estados','Hospitalizados']
 #Crear csv
 hospSonChNLPuAgrupados.to_csv(nameFileSonChPbNlConf,index=False)
+
+#PARTE 3 generar graficas
+#Grafica1 de barras por estado
+Estados = hospSonChNLPuAgrupados['Estados']
+Hospitalizados = hospSonChNLPuAgrupados['Hospitalizados']
+colorEst=['red', 'green', 'blue', 'gray']
+# Tamaño
+fig, ax = plt.subplots(figsize =(12, 8))
+# Barra horizontal
+ax.bar(Estados, Hospitalizados, color=colorEst)
+plt.xlabel('Estados')
+plt.ylabel('Cantidad')
+plt.title = 'Hopitalizados en CH,SON,PUB,NL'
+#guarda Grafica 1
+plt.savefig('grafica1.png')
+
+#Gragica2 tiempo
+#Filtro por confirmado
+casosConfirmados = pd.DataFrame(newDataSet[(newDataSet['RESULTADO'] == resultadoCovid)])
+#seleccion de fecha y resultados
+casosConfirmadosFechaResult = pd.DataFrame(casosConfirmados[['FECHA_INGRESO','RESULTADO']])
+#Agrupacion por fecha y contar casos
+agruparFechasConfirm = casosConfirmadosFechaResult.groupby('FECHA_INGRESO')['RESULTADO'].count().reset_index()
+Ingreso = agruparFechasConfirm['FECHA_INGRESO']
+Casos = agruparFechasConfirm['RESULTADO']
+#graficacion
+fig, ax = plt.subplots(figsize =(28, 10))
+# Barra horizontal
+ax.plot(Ingreso, Casos)
+plt.xticks(rotation=90)
+plt.xlabel('Fecha')
+plt.ylabel('Casos')
+#guarda Grafica 2
+plt.savefig('grafica2.png')
 
