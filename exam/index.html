@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+      <script src="https://code.highcharts.com/highcharts.js"></script>
+      <script src="https://code.highcharts.com/modules/exporting.js"></script>
+      <script src="https://code.highcharts.com/modules/export-data.js"></script>
+      <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+      <link rel="stylesheet" href="./css/styles.css">
+      <script src="./js/sonora_pac.js"></script> 
+      <script src="./js/general.js"></script> 
+      <script src="./js/export.js"></script> 
+      <script src="./js/per_state.js"></script> 
+      <script src="./js/graph_time.js"></script> 
+    </head>
+
+  <body>
+    <div class="container">
+      <div class=col-lg-12>
+      <div id="drop_zone" onclick="dropzoneClick()" accept=".csv" class="well"><center><h1><i class="fa-cloud-upload"></i> Agrega tu archivo aqui</h1></center></div>
+      <input type="file" name="file" id="file" class="hide"/>
+      </div>
+    </div>
+    </br>
+
+    <!-- Estos son las tabs por default esta seleccionada la primera -->
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'first')" id="defaultOpen">Confirmados en Sonora</button>
+        <button class="tablinks" onclick="openCity(event, 'second')">Cantidad por estado</button>
+        <button class="tablinks" onclick="openCity(event, 'third')">Grafica de cantidad por estado</button>
+        <button class="tablinks" onclick="openCity(event, 'forth')">Grafica de cantidad por tiempo</button>
+      </div>
+
+      <div id="first" class="tabcontent">
+        <!-- En esta tabla se presentan los datos de confirmados por  SARS-CoV2 en Sonora al igual si falleció -->
+        <table id="myTable" class="table table-borderless table-striped table-earning">
+          <thead>
+            <tr>
+              <th>Id_registro</th>
+              <th>Fecha de inicio de sintomas</th>
+              <th>Estado</th>
+              <th>Fecha de deceso</th>
+              <th>Sexo</th>
+            </tr>
+          </thead>
+          <tbody id="testBody"></tbody>
+        </table>
+      </div>
+      
+      <div id="second" class="tabcontent">
+        <table id="count_states" class="table table-borderless table-striped table-earning">
+            <thead>
+              <tr>
+                <th>Estado</th>
+                <th>Cantidad de casos hospitalizados</th>
+              </tr>
+            </thead>
+            <tbody id="testBody"></tbody>
+          </table>
+      </div>
+
+      <div id="third" class="tabcontent">
+          <!-- Seccion en donde se genera la grafica -->
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+        <!-- Boton para descargar la grafica -->
+        <button><a id="download" download="grafica1.png" href="" class="btn btn-primary float-right bg-flat-color-1" title="Descargar Gráfico">Descargar Grafica</a></button>
+      </div>
+
+      <div id="forth" class="tabcontent">
+        <div>
+            <canvas id="myChart2"></canvas>
+        </div>
+        <button><a id="download2" download="grafica2.png" href="" class="btn btn-primary float-right bg-flat-color-1" title="Descargar Gráfico">Descargar Grafica</a></button>
+      </div>
+
+  </body>
+</html>
+
+
+<script>
+$.PAYLOAD = new Object();
+
+$(document).ready(function(){
+    $("#file").change(handleFileSelect);
+ });
+
+// Esta es la funcion que te abre el modal para agregar el archivo
+function dropzoneClick(evt){
+  $('#file').click();
+}
+
+let info;
+let stations_names = [];
+
+// Aqui parsea el archivo que se carga para convertirlo en tipo JSON y poder manipularlo
+function handleFileSelect(evt) {
+  var file = evt.target.files[0];
+  Papa.parse(file, {
+    header: true,
+    dynamicTyping: true,
+    complete: function(data) {
+      console.log("Sin alterar");
+      console.log(data);
+
+    //  Mando llamar la funcion que procesa la informacion en tipo JSON para que pueda agregarlo a la tabla de personas en SONORA
+    generate_json_in_state(data.data);
+
+    // Se manda llamar la funcion que agregar a la tabla el total de pacientes pro covid de cada estado solicitado
+    cant_pac_per_state(data.data);
+
+    // Se manda llamar la funcion que agregar a la tabla el total de pacientes pro covid de cada estado solicitado
+    create_graph2(data.data);
+
+    }
+  });
+}
+
+document.getElementById("defaultOpen").click();
+
+// Esto hace que la grafica se convierta en base64 y se pueda descargar
+document.getElementById("download").addEventListener('click', function(){
+  /*Get image of canvas element*/
+  var url_base64jp = document.getElementById("myChart").toDataURL("image/jpg");
+  /*get download button (tag: <a></a>) */
+  var a =  document.getElementById("download");
+  /*insert chart image url to download button (tag: <a></a>) */
+  a.href = url_base64jp;
+});
+
+document.getElementById("download2").addEventListener('click', function(){
+  /*Get image of canvas element*/
+  var url_base64jp = document.getElementById("myChart2").toDataURL("image/jpg");
+  /*get download button (tag: <a></a>) */
+  var a =  document.getElementById("download2");
+  /*insert chart image url to download button (tag: <a></a>) */
+  a.href = url_base64jp;
+});
+
+</script>
