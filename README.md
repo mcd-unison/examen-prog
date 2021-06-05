@@ -13,3 +13,4 @@ Para poder generar las tablas, los archivos .csv y las imagenes debe ser importa
 ##### Descripcion:
 - Los archivos en .csv se generaran al momento de importar el archivo a leer en este caso "200511COVID19MEXICO.csv".
 - Las graficas se pueden descargar con el boton que se agrego, de igual manera se agregaron en la carpeta raiz.
+- En la pantalla aparecen unas tabs para que la informacion no se encimara se dividio de esa manera
