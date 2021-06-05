@@ -54,7 +54,7 @@ function generate_json_in_state(data){
         to_push.push(pac.gender);
         headers.push(to_push)
     });
-    //exportToCsv("tabla1.csv",headers);
+    exportToCsv("tabla1.csv",headers);
 
     loadTableData(pac_son_covid)
 }

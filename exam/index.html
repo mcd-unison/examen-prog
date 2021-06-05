@@ -15,6 +15,7 @@
       <script src="./js/general.js"></script> 
       <script src="./js/export.js"></script> 
       <script src="./js/per_state.js"></script> 
+      <script src="./js/graph_time.js"></script> 
     </head>
 
   <body>
@@ -31,7 +32,7 @@
         <button class="tablinks" onclick="openCity(event, 'first')" id="defaultOpen">Confirmados en Sonora</button>
         <button class="tablinks" onclick="openCity(event, 'second')">Cantidad por estado</button>
         <button class="tablinks" onclick="openCity(event, 'third')">Grafica de cantidad por estado</button>
-        <button class="tablinks" onclick="openCity(event, 'forth')">Otra grafica</button>
+        <button class="tablinks" onclick="openCity(event, 'forth')">Grafica de cantidad por tiempo</button>
       </div>
 
       <div id="first" class="tabcontent">
@@ -41,7 +42,7 @@
             <tr>
               <th>Id_registro</th>
               <th>Fecha de inicio de sintomas</th>
-              <th>Deceso</th>
+              <th>Estado</th>
               <th>Fecha de deceso</th>
               <th>Sexo</th>
             </tr>
@@ -75,6 +76,7 @@
         <div>
             <canvas id="myChart2"></canvas>
         </div>
+        <button><a id="download2" download="grafica2.png" href="" class="btn btn-primary float-right bg-flat-color-1" title="Descargar Gráfico">Descargar Grafica</a></button>
       </div>
 
   </body>
@@ -111,10 +113,13 @@ function handleFileSelect(evt) {
 
     // Se manda llamar la funcion que agregar a la tabla el total de pacientes pro covid de cada estado solicitado
     cant_pac_per_state(data.data);
+
+    // Se manda llamar la funcion que agregar a la tabla el total de pacientes pro covid de cada estado solicitado
+    create_graph2(data.data);
+
     }
   });
 }
-
 
 document.getElementById("defaultOpen").click();
 
@@ -124,6 +129,15 @@ document.getElementById("download").addEventListener('click', function(){
   var url_base64jp = document.getElementById("myChart").toDataURL("image/jpg");
   /*get download button (tag: <a></a>) */
   var a =  document.getElementById("download");
+  /*insert chart image url to download button (tag: <a></a>) */
+  a.href = url_base64jp;
+});
+
+document.getElementById("download2").addEventListener('click', function(){
+  /*Get image of canvas element*/
+  var url_base64jp = document.getElementById("myChart2").toDataURL("image/jpg");
+  /*get download button (tag: <a></a>) */
+  var a =  document.getElementById("download2");
   /*insert chart image url to download button (tag: <a></a>) */
   a.href = url_base64jp;
 });

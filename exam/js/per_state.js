@@ -49,7 +49,7 @@ function cant_pac_per_state(data){
         to_push.push(st.total);
         headers.push(to_push)
     });
-    //exportToCsv("tabla2.csv",headers);
+    exportToCsv("tabla2.csv",headers);
 
     // Se manda llamar la funcion para pintar la segunda tabla en la tab 2
     load_table_per_state(count_state);
