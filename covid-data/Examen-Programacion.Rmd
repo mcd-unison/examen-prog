@@ -30,7 +30,7 @@ df <- read.csv("200511COVID19MEXICO.csv")
 
 ### Utilizando la función glimse podemos ver la estructura general de nuestro datafrae: Número de datos, cantidad y nombre de las variables y el tipo de dato de cada una de ellas, así como los primeros registros.
 ```{r}
-glimpse(dft1)
+glimpse(df)
 ```
 
 
@@ -158,8 +158,20 @@ dfaux2
 ### Grafica 2
 ```{r}
 #as.Date(dfaux2$FECHA_INGRESO)
+
+
+
 ggplot(dfaux2, aes(x=FECHA_INGRESO, y=RESULTADO)) +  geom_point() +  geom_smooth(span = 0.2) + xlab("Fecha") + ylab("Contagios") + theme_minimal()
 
 
+
+```
+### Guardamos la Grafica
+```{r}
+png(filename = "grafica1.png", width = 800, height = 600)
+
+ggplot(dfaux2, aes(x=FECHA_INGRESO, y=RESULTADO)) +  geom_point() +  geom_smooth(span = 0.2) + xlab("Fecha") + ylab("Contagios") + theme_minimal()
+
+dev.off()
 ```
 
