@@ -1,11 +1,8 @@
 #+title: Examen de programación e ingeniería de software
 #+author: Maestría en Ciencia de Datos
 #+email: mcd@unison.mx
-#+date: Admisión 2020-2
-#+html: https://github.com/mcd-unison/examen-prog
-#+description: Examen  para la admisión a la /Maestria en Ciencia de Datos/ de la Universidad de Sonora
-#+options: h:1 num:t toc:nil
-#+LATEX_CLASS_OPTIONS: [letter,11pt]
-#+LATEX_HEADER: \usepackage[spanish]{babel}
+#+date: Admisión 2022
+
+
 
 Realiza lo que se solicita en el examen de programación e ingeniería de software de los **examenes de conocimiento para la admisión a la Maestría en Ciencia de Datos de la Universidad de Sonora, convocatoria 2022, para aspirantes internacionales*.
