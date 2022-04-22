@@ -1,6 +1,5 @@
 # Respuesta a examen de programación e ingeniería de software 
-A través de este proyecto se prodrán obtener información de los casos confirmados a la Covid19 en México utilizando  
-datos antiguos publicados por la Secretaría de Salud Federal.
+A través de este proyecto se prodrán obtener información de los casos confirmados a la Covid19 en México utilizando datos antiguos publicados por la Secretaría de Salud Federal.
 
 ## Pre-requisitos 📋
 Se deberá tener instalado previamente python y los paquetes plotly.express y kaleido. 
