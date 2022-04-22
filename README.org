@@ -5,4 +5,4 @@
 
 
 
-Realiza lo que se solicita en el examen de programación e ingeniería de software de los **examenes de conocimiento para la admisión a la Maestría en Ciencia de Datos de la Universidad de Sonora, convocatoria 2022, para aspirantes internacionales*.
+Realiza lo que se solicita en el examen de programación e ingeniería de software de los *examenes de conocimiento para la admisión a la Maestría en Ciencia de Datos de la Universidad de Sonora, convocatoria 2022, para aspirantes internacionales*.
