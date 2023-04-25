@@ -18,6 +18,7 @@ Las instrucciones son las siguientes:
 6. Realizar un commit y actualiza el repositorio.
 7. Sube en tu examen un enlace a tu repositorio.
 
+La letalidad se calcula como el acumulado de pacientes que fueron ingresados respecto a la cantidad de pacientes que al final causaron una lamentable defunción. En este caso los acumulados (para la figura) los estamos tomando por semana y únicamente con la fecha de ingreso al sistema hospitalario. Estos son datos únicamente de pacientes que fueron ingresados a hospitalización. La letalidad nos da una idea de la agresividad del virus, sin que esto refleje numeros en forma global (para eso se utiliza el indicador de mortalidad por cada 100 mil habitantes). Toma en cuenta que la única forma de saber si un paciente causo defunción, es porque tiene una fecha de deceso (afortunadamente la gran mayora no tiene fecha de deceso).
 
 En la evaluación se tomará en cuenta:
 
