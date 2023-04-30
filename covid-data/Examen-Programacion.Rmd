@@ -1,0 +1,177 @@
+---
+title: "Examen de Programación"
+author: "Manuel Valenzuela"
+date: "4/5/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ejemplo de algunas instrucciones para la manipulación de dataframes con dplyr.  
+```{r warning=FALSE, include=FALSE}
+#library(ggplot2)
+library(stringr)
+library(dplyr)
+library(scales)
+library(tseries)
+library(ggfortify)
+
+
+```
+
+
+### Realizamos la lectura del archivo .csv y lo guardamos en un dataframe.
+```{r}
+df <- read.csv("200511COVID19MEXICO.csv")
+```
+
+
+### Utilizando la función glimse podemos ver la estructura general de nuestro datafrae: Número de datos, cantidad y nombre de las variables y el tipo de dato de cada una de ellas, así como los primeros registros.
+```{r}
+glimpse(df)
+```
+
+
+### A continuacion utilizamos la función select para quedarnos únicamente con las columnas que vamos a utilizar y creamos un nuevo  dataframe con ellas.
+```{r}
+df2 <- df %>% select(1,8,12,13,31) 
+```
+
+
+### Mostramos nuestro nuevo dataframe.
+```{r}
+head(df2,5)
+```
+
+
+### Utilizando los filtros que nos proporciona dplyr, nos quedamos solo con los datos correspondientes a Sonora y confirmados de SARS-CoV2
+```{r, }
+df3 <- df2 %>% filter(ENTIDAD_RES == 26 & RESULTADO == 1)
+```
+
+
+### Mostramos como quedó el nuevo dataframe.
+```{r}
+df3
+```
+
+
+### Guardamos nuestra tabla final como "tabla1.csv"
+```{r}
+write.csv(df3, file = "tabla1.csv")
+```
+
+
+
+
+###                             Ejercicio 2
+
+### Creamos un dataframe con las columnas "TIPO_PACIENTE" y "ENTIDAD_UM"
+```{r}
+dft2 <- df %>% select(10,5) 
+```
+
+```{r}
+dft2
+```
+
+### De la columna TIPO_PACIENTE Nos quedamos solo con los hospitalizados (TIPO_PACIENTE = 2)
+```{r}
+dft3 <- dft2 %>% filter(TIPO_PACIENTE == 2)
+
+```
+
+
+### numero de elementos en cada entidad
+```{r}
+sonora = sum(dft3$ENTIDAD_UM == 26)
+chihuahua = sum(dft3$ENTIDAD_UM == 08)
+nuevoLeon = sum(dft3$ENTIDAD_UM == 19)
+puebla = sum(dft3$ENTIDAD_UM == 21)
+```
+
+
+```{r}
+entidad <- c("Sonora", "Chihuahua", "Nuevo León", "Puebla")
+hospitalizados <- c(sonora, chihuahua, nuevoLeon, puebla)
+tabla2 <- data.frame(entidad,hospitalizados)
+```
+
+```{r}
+write.csv(tabla2, file = "tabla2.csv")
+```
+
+```{r}
+glimpse(tabla2)
+
+```
+
+
+
+### Grafica 1
+
+```{r}
+ggplot(tabla2, aes(entidad, hospitalizados, fill=entidad)) +
+  geom_bar(stat='identity') + theme_minimal() +
+  xlab("Estado") + ylab("Numero de Hospitalizados") +  scale_fill_brewer(palette = 1)
+```
+
+
+### Guardamos la grafica1 como archivo .png
+```{r}
+png(filename = "grafica1.png", width = 800, height = 600)
+
+ggplot(tabla2, aes(entidad, hospitalizados, fill=entidad)) +
+  geom_bar(stat='identity') + theme_minimal() +
+  xlab("Estado") + ylab("Numero de Hospitalizados") +  scale_fill_brewer(palette = 1)
+
+dev.off()
+
+```
+
+
+
+### Grafica 2
+
+
+### Nos quedamos con la fecha de ingreso y los casos positivos 
+```{r}
+dfaux <- df %>% select(11,31) 
+dfauxp <- dfaux %>% filter(RESULTADO == 1)
+dfauxp
+```
+
+### agrupamos los casos por fechas
+
+```{r}
+dfaux2 = dfauxp %>% 
+    group_by(FECHA_INGRESO) %>%             
+    summarise(RESULTADO = sum(RESULTADO))
+```
+
+```{r}
+dfaux2
+```
+
+### Grafica 2
+```{r}
+#as.Date(dfaux2$FECHA_INGRESO)
+
+
+
+ggplot(dfaux2, aes(x=FECHA_INGRESO, y=RESULTADO)) +  geom_point() +  geom_smooth(span = 0.2) + xlab("Fecha") + ylab("Contagios") + theme_minimal()
+
+
+
+```
+### Guardamos la Grafica
+```{r}
+png(filename = "grafica1.png", width = 800, height = 600)
+
+ggplot(dfaux2, aes(x=FECHA_INGRESO, y=RESULTADO)) +  geom_point() +  geom_smooth(span = 0.2) + xlab("Fecha") + ylab("Contagios") + theme_minimal()
+
+dev.off()
+```
+
